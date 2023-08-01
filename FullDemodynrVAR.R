@@ -98,7 +98,23 @@ func.test = readRDS('./functest.RDS')
     sub4dynr(inputs = res.list, type = 'dynr.cook', p.val = 0.05, 
              params = c('a_5', 'c_4', 'd_5','e_4'), 
              method = 'fuzz', k = 2)
-  
+  # Avgnet Function  
+    avgnet = function(dynrVAR.out = NULL, params = c('Betas', 'Resid','PDC', 'PCC')){
+      avgnets = list()
+      temp.avg = NULL
+      averagenet = NULL
+      for(j in params){
+        for(i in 1:length(dynrVAR.out[[1]])){
+          thenets = c(dynrVAR.out[[1]][[i]][[j]])
+          temp.avg = rbind(temp.avg, thenets)
+          sdnet = matrix(apply(temp.avg, 2, sd), length(varnames), length(varnames), byrow = TRUE)
+          averagenet = matrix(colMeans(temp.avg), length(varnames), length(varnames), byrow = TRUE)
+        }
+        avgnets[[j]] = list('Average Network' = averagenet, 'SD Network' = sdnet)
+      }
+    }
+
+sdnet    
     
   
     
