@@ -1,6 +1,6 @@
 library(dynr); library(qgraph)
 library(igraph); library(fclust)
-source('./VAR Fitting.R')
+source('./dynrVAR.R')
 source('./Subgrouping.R')
 # Sample Characteristics
   nv = 5; times = 300; N = 8  
@@ -68,8 +68,10 @@ source('./Subgrouping.R')
 
 # Fitting Auto-VAR
 # COMMENTED OUT TO SAVE YOU TIME
-# func.test = dynr.var(data = true.dat, nv = nv, ID = 'id', 
-#                      time = 'time', dir = '~/Desktop/dynr Functions/')
+poop = subset(true.dat, id == 1 | id == 2)# | id == 3)
+func.test = dynr.VAR(data = poop, varnames = paste0('X', 1:5), 
+                     id = 'id', time = 'time', dir = '~/Desktop/test/',
+                     MLVAR = TRUE)
 # INSTEAD USE LINE BELOW TO READ IN OUTPUT
 func.test = readRDS('./functest.RDS')
 # Plotting Output of 2 subjects from each subgroup:
