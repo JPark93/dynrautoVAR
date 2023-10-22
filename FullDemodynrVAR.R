@@ -1,7 +1,7 @@
 library(dynr); library(qgraph)
 library(igraph); library(fclust)
-source('./dynrVAR.R')
-source('./Subgrouping.R')
+source('./weVAR.R')
+source('./dynr.sub.R')
 # Sample Characteristics
   nv = 5; times = 300; N = 8  
   set.seed(312489)
@@ -68,53 +68,53 @@ source('./Subgrouping.R')
 
 # Fitting Auto-VAR
 # COMMENTED OUT TO SAVE YOU TIME
-poop = subset(true.dat, id == 1 | id == 2)# | id == 3)
-func.test = dynr.VAR(data = poop, varnames = paste0('X', 1:5), 
-                     id = 'id', time = 'time', dir = '~/Desktop/test/',
-                     MLVAR = TRUE)
+# create
+# func.test = weVAR(data = true.dat, varnames = paste0('X', 1:5),
+#                      id = 'id', time = 'time', dir = '~/Desktop/test/',
+#                      MLVAR = FALSE)
 # INSTEAD USE LINE BELOW TO READ IN OUTPUT
 func.test = readRDS('./functest.RDS')
 # Plotting Output of 2 subjects from each subgroup:
   par(mfrow = c(2,2))
   for(pyj in c(3:6)){ # 3 and 4 are Subgroup 1; 5 and 6 are Subgroup 2
-    qgraph::qgraphMixed(func.test[[pyj]]$PCC, func.test[[pyj]]$PDC, 
+    qgraph::qgraphMixed(func.test[[1]][[pyj]]$PCC, func.test[[1]][[pyj]]$PDC, 
                         layout = 'circle', theme = 'gimme', 
                         ltyUndirected = 1, ltyDirected = 2)  
   }
 # Clustering on dynr.var function output
   # Clustering using WalkTrap (Hard Clustering); Using info from PCC and PDC Matrices
-  sub4dynr(inputs = func.test, type = 'dynr.var', method = 'hard', var.opt = 'Both')
+  dynr.sub(input = func.test, method = 'hard', params.var = 'Both')
   # Clustering using Fuzzy k-means (Fuzzy Clustering); Using info from PCC and PDC
     # k = 2 for number of clusters desired and m = 2 for value of fuzzifier
-      sub4dynr(inputs = func.test, type = 'dynr.var', 
-               var.opt = 'Both', method = 'fuzz', k = 2, m = 2)
+      dynr.sub(input = func.test, params.var = 'Both',
+               method = 'fuzz', k = 2, m = 2)
 # Clustering based on list of dynr.cook objects
-  # Creating a list of dynr.cook objects from our outputted dynr.var output
+  # Creating a list of dynr.cook objects from our outputted weVAR output
     res.list = list()
-    for(i in 1:length(func.test)){
-      res.list[[i]] = func.test[[i]]$Res
+    for(i in 1:length(func.test[[1]])){
+      res.list[[i]] = func.test[[1]][[i]]$Res
     }
   # Clustering based on specific parameters from dynr.cook objects
-    sub4dynr(inputs = res.list, type = 'dynr.cook', p.val = 0.05, 
-             params = c('a_5', 'c_4', 'd_5','e_4'), 
+    dynr.sub(input = res.list, alpha = 0.05, 
+             params.cook = c('a_5', 'c_4', 'd_5','e_4'), 
              method = 'fuzz', k = 2)
-  # Avgnet Function  
-    avgnet = function(dynrVAR.out = NULL, params = c('Betas', 'Resid','PDC', 'PCC')){
-      avgnets = list()
-      temp.avg = NULL
-      averagenet = NULL
-      for(j in params){
-        for(i in 1:length(dynrVAR.out[[1]])){
-          thenets = c(dynrVAR.out[[1]][[i]][[j]])
-          temp.avg = rbind(temp.avg, thenets)
-          sdnet = matrix(apply(temp.avg, 2, sd), length(varnames), length(varnames), byrow = TRUE)
-          averagenet = matrix(colMeans(temp.avg), length(varnames), length(varnames), byrow = TRUE)
-        }
-        avgnets[[j]] = list('Average Network' = averagenet, 'SD Network' = sdnet)
-      }
-    }
-
-sdnet    
+#   # Avgnet Function  
+#     avgnet = function(dynrVAR.out = NULL, params = c('Betas', 'Resid','PDC', 'PCC')){
+#       avgnets = list()
+#       temp.avg = NULL
+#       averagenet = NULL
+#       for(j in params){
+#         for(i in 1:length(dynrVAR.out[[1]])){
+#           thenets = c(dynrVAR.out[[1]][[i]][[j]])
+#           temp.avg = rbind(temp.avg, thenets)
+#           sdnet = matrix(apply(temp.avg, 2, sd), length(varnames), length(varnames), byrow = TRUE)
+#           averagenet = matrix(colMeans(temp.avg), length(varnames), length(varnames), byrow = TRUE)
+#         }
+#         avgnets[[j]] = list('Average Network' = averagenet, 'SD Network' = sdnet)
+#       }
+#     }
+# 
+# sdnet    
     
   
     

@@ -8,7 +8,7 @@
 #'
 #' @return Returns a list of fitted VAR(1) models for each subject.
 #'
-#' @details I encapsulated `dynrautoVAR` into a temporary package so I can render the documentation and do some tests.
+#' @details I encapsulated `weVAR` into a temporary package so I can render the documentation and do some tests.
 #'
 #' I made the following changes to the code.
 #' 1. I changed the argument `data` to `dataframe` to match [dynr::dynr.data()].
@@ -19,12 +19,12 @@
 #' 1. I set a default value for the argument `dir` to remove it from the argument handling section.
 #' 1. I cleaned up the argument handling section.
 #' 1. I changed `result$estimation.result` to `results$estimation.result`.
-#' 1. I gave the output a class of `dynrVar` for subsequent use of the output.
+#' 1. I gave the output a class of `weVAR` for subsequent use of the output.
 #' 1. I used [styler::style_pkg()] to style the code for added readability.
 #'
 #' Note that I mainly based the way I documented the arguments from functions in the `dynr` package used within this function. If you are amenable to the way I documented this function, I will proceed to documenting the rest.
 #'
-#' @references Add references to [dynr.var()] here.
+#' @references Add references to [weVAR()] here.
 #'
 #' @param dataframe a data frame object of data that contain a column of subject ID numbers (i.e., an ID variable), a column indicating subject-specific measurement occasions (i.e., a TIME variable), at least one column of observed values, and any number of covariates. The TIME variable should contain subject-specific sequences of (subsets of) consecutively equally spaced numbers (e.g, 1, 2, 3, ...). That is, the program assumes that the input data.frame is equally spaced with potential missingness. If the measurement occasions for a subject are a subset of an arithmetic sequence but are not consecutive, NAs will be inserted automatically to create an equally spaced data set before estimation. Missing values in the observed variables shoud be indicated by NA.
 #' @param varnames the names of the variables to be modeled in the VAR
@@ -44,7 +44,7 @@
 #' @param verbose if `verbose = FALSE` dynr will not give specifics regarding estimation
 #' @import dynr
 #' @export
-dynr.VAR <- function(dataframe,
+weVAR <- function(dataframe,
                      varnames = NULL,
                      id = NULL,
                      time,
@@ -265,7 +265,7 @@ dynr.VAR <- function(dataframe,
     individualMods = list(individualMods, GroupMod)
   
   class(individualMods) <- c(
-    "dynrVAR",
+    "weVAR",
     class(individualMods)
   )
   return(individualMods)
